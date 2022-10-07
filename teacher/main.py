@@ -111,7 +111,7 @@ def run(
 
 
 @app.command()
-def run_per_random_seed(
+def main(
     
     num_of_classes: int,
     num_of_epochs: int,
