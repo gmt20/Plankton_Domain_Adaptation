@@ -1,11 +1,13 @@
+import os
+import sys
 
 import torch
 import typer
 import numpy as np
-import os
 import matplotlib.pylab as plt
+import torchvision.transforms as T
 from torch import nn
-import sys
+
 from models.resnet12 import Resnet12
 from models.classifier import Classifier
 from datasets import PMID2019, commons
@@ -143,7 +145,7 @@ def main(
     
     ## Apply Transformations ## 
     
-    list_of_transformations =[] #Torch Vision transforms
+    list_of_transformations =[T.RandomRotation, T.RandomAffine, T.RandomVerticalFlip, T.RandomHorizontalFlip] #Torch Vision transforms
     
     transformed_train_dataloader = commons.applyTransformations(train_dataloader, list_of_transformations)
     transformed_val_dataloader = commons.applyTransformations(val_dataloader, list_of_transformations)
