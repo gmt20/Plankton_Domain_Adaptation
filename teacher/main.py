@@ -143,7 +143,7 @@ def main(
     
     ## Apply Transformations ## 
     
-    list_of_transformations =[]
+    list_of_transformations =[] #Torch Vision transforms
     
     transformed_train_dataloader = commons.applyTransformations(train_dataloader, list_of_transformations)
     transformed_val_dataloader = commons.applyTransformations(val_dataloader, list_of_transformations)
