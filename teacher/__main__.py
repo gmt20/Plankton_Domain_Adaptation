@@ -115,15 +115,15 @@ def main(args):
 
     ## Create datasets ###
     
-    train_dataset_without_normalization = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train', normalize_param=None)
+    train_dataset_without_normalization = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train', image_size=args.image_size, normalize_param=None)
     
     mean, std = normalize(args.batch_size, train_dataset_without_normalization)
     
     print("Mean and Std", mean, std)
     
-    train_dataset = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train', normalize_param=[mean,std])
-    val_dataset = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='val', normalize_param=[mean,std])
-    test_dataset = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='test', normalize_param=[mean,std])
+    train_dataset = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=[mean,std])
+    val_dataset = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='val',  image_size=args.image_size, normalize_param=[mean,std])
+    test_dataset = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='test',  image_size=args.image_size, normalize_param=[mean,std])
     
     
     ## Create Dataloader ##
@@ -188,6 +188,11 @@ if __name__ == "__main__":
     )
 
     parser.add_argument("--dataset_dir", type=str, default="/Users/megha/Desktop/Plankton_Domain_Adaptation/data", help="Dataset dir")
+    
+    parser.add_argument(
+        "--image_size", type=int, default=224, help="Size of Image"
+    )
 
+    
     args = parser.parse_args()
     main(args)
