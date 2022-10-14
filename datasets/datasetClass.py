@@ -83,6 +83,7 @@ class MyDataset(Dataset):
         root_dir,
         split_file,
         phase,
+        image_size,
         normalize_param=None
     ):
 
@@ -102,7 +103,7 @@ class MyDataset(Dataset):
         
         self.phase = phase
         
-        self.image_size = 128
+        self.image_size = image_size
         
         self.normalize_param = normalize_param
        
