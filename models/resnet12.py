@@ -5,6 +5,7 @@ import torch
 import numpy as np
 import torch.nn.functional as F
 
+
 class Block(torch.nn.Module):
     def __init__(self, ni, no, stride, dropout=0, groups=1):
         super().__init__()
@@ -34,21 +35,24 @@ class Resnet12(torch.nn.Module):
     def __init__(self, width=1, dropout=0.5):
         super().__init__()
         self.output_size = 512
-        #assert(width == 1) # Comment for different variants of this model
+        # assert(width == 1) # Comment for different variants of this model
         self.widths = [x * int(width) for x in [64, 128, 256]]
         self.widths.append(self.output_size * width)
         self.bn_out = torch.nn.BatchNorm1d(self.output_size)
 
-        start_width = 3
+
+        start_width = width
         for i in range(len(self.widths)):
-            setattr(self, "group_%d" %i, Block(start_width, self.widths[i], 1, dropout))
+            setattr(
+                self, "group_%d" % i, Block(start_width, self.widths[i], 1, dropout)
+            )
             start_width = self.widths[i]
 
     def add_classifier(self, nclasses, name="classifier", modalities=None):
         setattr(self, name, torch.nn.Linear(self.output_size, nclasses))
 
     def up_to_embedding(self, x):
-        """ Applies the four residual groups
+        """Applies the four residual groups
         Args:
             x: input images
             n: number of few-shot classes

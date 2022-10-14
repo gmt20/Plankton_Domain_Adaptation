@@ -31,9 +31,9 @@ def loop_over_all_epochs(
         val_epoch_accs = []
         min_val_loss = 100.0
         for epoch in range(num_of_epochs):
-            
+
             net.train()
-            
+
             (
                 train_running_loss,
                 train_running_corrects,
@@ -50,19 +50,15 @@ def loop_over_all_epochs(
                 .cpu()
                 .data.numpy()
             )
-           
 
             train_epoch_losses.append(train_epoch_loss)
-           
+
             train_epoch_accs.append(train_epoch_acc)
 
-            
             with open(log_filepath, "a") as f:
                 f.write(f"Epoch {epoch}")
-                f.write(
-                    f"Train Loss: {train_epoch_loss} Acc: {train_epoch_acc}"
-                )
-              
+                f.write(f"Train Loss: {train_epoch_loss} Acc: {train_epoch_acc}")
+
             net.eval()
 
             (
@@ -79,40 +75,34 @@ def loop_over_all_epochs(
             val_epoch_acc = (
                 (val_running_corrects.double() / val_dataset_size).cpu().data.numpy()
             )
-           
 
             ## SAVE THE LAST MODEL
             if epoch == num_of_epochs - 1:
                 path = os.path.join(save_model_path, "teacher_model_last.pkl")
                 sd = {}
                 sd["Encoder"] = copy.deepcopy(net[0].state_dict())
-                sd["Clasifier"] = copy.deepcopy(net[0].state_dict())
-                torch.save(sd,path)
-                
+                sd["Classifier"] = copy.deepcopy(net[0].state_dict())
+                torch.save(sd, path)
 
             ## SAVE THE BEST MODEL
             if val_epoch_loss <= min_val_loss:
                 path = os.path.join(save_model_path, "teacher_model_best.pkl")
                 sd = {}
                 sd["Encoder"] = copy.deepcopy(net[0].state_dict())
-                sd["Clasifier"] = copy.deepcopy(net[0].state_dict())
-                torch.save(sd,path)
+                sd["Classifier"] = copy.deepcopy(net[0].state_dict())
+                torch.save(sd, path)
                 min_val_loss = val_epoch_loss
 
             val_epoch_losses.append(val_epoch_loss)
             val_epoch_accs.append(val_epoch_acc)
 
-            
             with open(log_filepath, "a") as f:
-               
-                f.write(
-                    f"Val Loss: {val_epoch_loss} Acc: {val_epoch_acc}"
-                )
-              
+
+                f.write(f"Val Loss: {val_epoch_loss} Acc: {val_epoch_acc}")
 
         loss = [train_epoch_losses, val_epoch_losses]
         acc = [train_epoch_accs, val_epoch_accs]
-        
+
     else:
         net.eval()
         (
@@ -127,8 +117,6 @@ def loop_over_all_epochs(
 
         loss = [test_loss / test_dataset_size]
         acc = [(test_corrects.double() / test_dataset_size).cpu().data.numpy()]
-
-        
 
     return loss, acc
 

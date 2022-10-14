@@ -1,12 +1,9 @@
 import torch.nn.functional as F
 from torch import nn
-from cba.har.utils.types import EncoderType
 
 
 class Classifier(nn.Module):  ###classifier head for cross entropy loss
-    def __init__(
-        self, embedding_dimension, num_of_classes,ln1=256, p=0.2
-    ):
+    def __init__(self, embedding_dimension, num_of_classes, ln1=256, p=0.2):
         super(Classifier, self).__init__()
         # Defining the two layer MLP
         ln2 = ln1 // 2
