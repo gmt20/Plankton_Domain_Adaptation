@@ -89,15 +89,7 @@ class MyDataset(Dataset):
 
         images, labels = self.load_datafiles(split_file, phase)
         
-        # lets encode images with labels fro 0 to n-1
-        
-        le = label_encoder()
-        
-        le.fit(labels)
-        
-        #print(len(le.classes_))
-        
-        self.labels = le.transform(labels)
+        self.labels = labels
         self.images = images
         self.root_dir = root_dir
         

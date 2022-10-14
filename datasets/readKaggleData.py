@@ -1,7 +1,7 @@
 import os
 import pickle
 from sklearn.model_selection import train_test_split
-
+from sklearn.preprocessing import LabelEncoder as label_encoder
 
 def createDataset(path):
     dir_list = os.listdir(path)
@@ -15,9 +15,14 @@ def createDataset(path):
             images.append(dir + "/" + file)
             labels.append(dir)
 
+    # label encoder
+    le = label_encoder()
+    le.fit(labels)
+    transformed_labels = le.transform(labels)
+
     # 70-30 train-test split
     image_train, image_test, label_train, label_test = train_test_split(
-        images, labels, test_size=0.3, random_state=42
+        images, transformed_labels, test_size=0.3, random_state=42
     )
 
     # 60-40 train-val split
@@ -31,8 +36,7 @@ def createDataset(path):
         "val_images": image_val,
         "val_labels": label_val,
         "test_images": image_test,
-        "test_labels": label_test,
-        
+        "test_labels": label_test
     }
 
     outfile = open("kaggle_dataset.pkl", "wb")
