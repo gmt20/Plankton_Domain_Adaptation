@@ -45,5 +45,5 @@ def createDataset(path):
 
 
 if __name__ == "__main__":
-    path = "../data/kaggle"
+    path = "../../DL/Project/data/kaggle" # change this path to the google drive directory
     createDataset(path)
