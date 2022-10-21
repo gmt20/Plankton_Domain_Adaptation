@@ -12,7 +12,7 @@ from torch import nn
 
 from models.resnet12 import Resnet12
 from models.classifier import Classifier
-from datasets import readKaggleData, readWHOIData, commons
+from datasets import readKaggleData, readWHOIData
 from teacher.train import loop_over_all_epochs
 
 import argparse
@@ -83,10 +83,13 @@ def run(
     plt.ylabel("Loss")
     plt.savefig(fig_filepath)
     plt.clf()
-    # plt.show()
+    plt.show()
 
     # TEST
-
+    # print(model.state_dict)
+    # print(torch.load("./teacher/models/teacher_model_best.pkl")["Encoder"].keys())
+    # assert 1==0
+    model.load_state_dict(torch.load("./teacher/models/teacher_model_best.pkl"))
     (test_loss, test_acc,) = loop_over_all_epochs(
         [testloader], 1, model, train_on_gpu, loss_criteria, "test"
     )
@@ -112,12 +115,9 @@ def main(args):
     if args.dataset == "KaggleData":
         dataset_pkl = os.path.join(args.dataset_dir, "kaggle_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "kaggle")    
-
+        mean, std = 0.9016, 0.206
     ## Create datasets ###
     
-    train_dataset_without_normalization = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train', image_size=args.image_size, normalize_param=None)
-    
-    mean, std = normalize(args.batch_size, train_dataset_without_normalization)
     
     print("Mean and Std", mean, std)
     
@@ -166,11 +166,11 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--batch_size", type=int, default=32, help="batch_size for tecaher"
+        "--batch_size", type=int, default=64, help="batch_size for tecaher"
     )
 
     parser.add_argument(
-        "--num_of_classes", type=int, default=32, help="classes in dataset"
+        "--num_of_classes", type=int, default=118, help="classes in dataset"
     )
 
     parser.add_argument(

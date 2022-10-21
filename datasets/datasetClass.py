@@ -59,7 +59,7 @@ class TransformDataset:
                     "Normalize",
                 ]
             else:
-                transform_list = ["Resize", "CenterCrop", "ToTensor", "Normalize"]
+                transform_list = ["ToPILImage", "Resize", "CenterCrop", "ToTensor", "Normalize"]
         else:
             if self.aug:
                 transform_list = [
@@ -70,7 +70,7 @@ class TransformDataset:
                     "ToTensor",
                 ]
             else:
-                transform_list = ["Resize", "CenterCrop", "ToTensor"]
+                transform_list = ["ToPILImage", "Resize", "CenterCrop", "ToTensor"]
 
         transform_funcs = [self.parse_transform(x) for x in transform_list]
         transform = transforms.Compose(transform_funcs)
@@ -98,6 +98,8 @@ class MyDataset(Dataset):
         self.image_size = image_size
         
         self.normalize_param = normalize_param
+        
+        # print("Number of classes", np.unique(labels, return_counts=True))
        
     def load_datafiles(self, filepath, phase):
 
@@ -119,11 +121,12 @@ class MyDataset(Dataset):
             aug = False
         else:
             aug = True
-            
+        print(image_path) 
         
         transform_dataset = TransformDataset(self.image_size, self.normalize_param, aug)
         image = transform_dataset.apply_transformations(image_path)
         label = self.labels[i]
+        print(label)
 
         return (image, label)
 

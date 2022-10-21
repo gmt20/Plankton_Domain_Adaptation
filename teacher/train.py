@@ -5,8 +5,7 @@ from torch.autograd import Variable
 from sklearn.metrics import f1_score
 from torch import nn
 import os
-
-import sys
+from tqdm import tqdm
 
 # TODO: change name
 def loop_over_all_epochs(
@@ -30,7 +29,7 @@ def loop_over_all_epochs(
         val_epoch_losses = []
         val_epoch_accs = []
         min_val_loss = 100.0
-        for epoch in range(num_of_epochs):
+        for epoch in tqdm(range(num_of_epochs)):
 
             net.train()
 
@@ -80,16 +79,14 @@ def loop_over_all_epochs(
             if epoch == num_of_epochs - 1:
                 path = os.path.join(save_model_path, "teacher_model_last.pkl")
                 sd = {}
-                sd["Encoder"] = copy.deepcopy(net[0].state_dict())
-                sd["Classifier"] = copy.deepcopy(net[0].state_dict())
+                sd = copy.deepcopy(net.state_dict())
                 torch.save(sd, path)
 
             ## SAVE THE BEST MODEL
             if val_epoch_loss <= min_val_loss:
                 path = os.path.join(save_model_path, "teacher_model_best.pkl")
                 sd = {}
-                sd["Encoder"] = copy.deepcopy(net[0].state_dict())
-                sd["Classifier"] = copy.deepcopy(net[0].state_dict())
+                sd = copy.deepcopy(net.state_dict())
                 torch.save(sd, path)
                 min_val_loss = val_epoch_loss
 
@@ -131,7 +128,7 @@ def loop_over_all_datapoints(
     pred_labels = []
     total_size = 0
 
-    for X, y in dataloader:
+    for X, y in tqdm(dataloader):
         X = Variable(X).float()
         y = Variable(y).type(torch.LongTensor)
 
@@ -144,8 +141,10 @@ def loop_over_all_datapoints(
 
         with torch.set_grad_enabled(phase == "train"):
             output = net(X)
+            print("Output",output.shape)
             _, preds = torch.max(output, 1)
-            loss = loss_criteria(output, y)
+            print("y", y.shape)
+            loss = loss_criteria( output, y)
 
             if phase == "train":
                 loss.backward()
