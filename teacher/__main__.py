@@ -98,16 +98,17 @@ def run(
     test_acc += np.asarray(test_acc)[0]
 
     with open(log_filepath, "a") as f:
-
         f.write(f"Test Metrics ")
+        f.write("\n")
         f.write(f"Test Loss: {np.asarray(test_loss)[0]} Acc: {np.asarray(test_acc)[0]}")
-
+        f.write("\n")
 
 def main(args):
     if not os.path.exists(args.model_save_path):
         os.mkdir(args.model_save_path)
 
     log_dir = os.path.join(args.model_save_path, "logs")
+    
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
 
@@ -116,6 +117,13 @@ def main(args):
         dataset_pkl = os.path.join(args.dataset_dir, "kaggle_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "kaggle")    
         mean, std = 0.9016, 0.206
+        
+    elif args.dataset == "WHOIData":
+        dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
+        root_dir= os.path.join(args.dataset_dir, "whoi")    
+        
+    unnormlaised_data = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=None)
+    mean, std = normalize(args.batch_size, unnormlaised_data)
     ## Create datasets ###
     
     
@@ -161,7 +169,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_save_path",
         type=str,
-        default=".",
+        default="./teacher/models",
         help="directory to save the checkpoints",
     )
 
@@ -187,7 +195,7 @@ if __name__ == "__main__":
         "--dataset", type=str, default="KaggleData", help="Name of dataset"
     )
 
-    parser.add_argument("--dataset_dir", type=str, default="/Users/megha/Desktop/Plankton_Domain_Adaptation/data", help="Dataset dir")
+    parser.add_argument("--dataset_dir", type=str, default="/home/jwomack30/Plankton_Domain_Adaptation/data", help="Dataset dir")
     
     parser.add_argument(
         "--image_size", type=int, default=224, help="Size of Image"

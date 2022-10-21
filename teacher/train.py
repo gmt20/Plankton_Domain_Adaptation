@@ -20,7 +20,7 @@ def loop_over_all_epochs(
     log_filepath: str = "current.log",
 ) -> Tuple[List, List]:
     if gpu_train:
-        net = net.cuda(0)
+        net = net.cuda()
 
     if phase == "train":
 
@@ -56,8 +56,11 @@ def loop_over_all_epochs(
 
             with open(log_filepath, "a") as f:
                 f.write(f"Epoch {epoch}")
-                f.write(f"Train Loss: {train_epoch_loss} Acc: {train_epoch_acc}")
-
+                f.write("\n")
+                f.write(f" Train Loss: {train_epoch_loss}")
+                f.write("\n")
+                f.write(f" Acc: {train_epoch_acc}")
+                f.write("\n")
             net.eval()
 
             (
@@ -96,6 +99,7 @@ def loop_over_all_epochs(
             with open(log_filepath, "a") as f:
 
                 f.write(f"Val Loss: {val_epoch_loss} Acc: {val_epoch_acc}")
+                f.write("\n")
 
         loss = [train_epoch_losses, val_epoch_losses]
         acc = [train_epoch_accs, val_epoch_accs]
@@ -133,17 +137,17 @@ def loop_over_all_datapoints(
         y = Variable(y).type(torch.LongTensor)
 
         if gpu_train:
-            X = X.cuda(0)
-            y = y.cuda(0)
+            X = X.cuda()
+            y = y.cuda()
 
         if phase == "train":
             optimizer.zero_grad()
 
         with torch.set_grad_enabled(phase == "train"):
             output = net(X)
-            print("Output",output.shape)
+            # print("Output",output.shape)
             _, preds = torch.max(output, 1)
-            print("y", y.shape)
+            # print("y", y.shape)
             loss = loss_criteria( output, y)
 
             if phase == "train":
