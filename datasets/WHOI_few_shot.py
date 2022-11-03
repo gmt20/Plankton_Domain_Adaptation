@@ -29,7 +29,7 @@ class TransformDataset:
         transformed_image = transforms(image)
         
         return transformed_image
-        
+    
     def parse_transform(self, transform_type):
         
         method = getattr(transforms, transform_type)
@@ -74,7 +74,7 @@ class TransformDataset:
         return transform
 
 
-class MyDataset(Dataset):
+class SimpleDataset(Dataset):
     def __init__(
         self,
         root_dir,
@@ -114,22 +114,13 @@ class MyDataset(Dataset):
 
     def __getitem__(self, i):
         image_path = os.path.join(self.root_dir, self.images[i])
-        if self.phase == "test":
-            aug = False
-        else:
-            aug = True
-        # print(image_path) 
-        
-        transform_dataset = TransformDataset(self.image_size, self.normalize_param, aug)
-        image = transform_dataset.apply_transformations(image_path)
+        image = read_image(image_path)
         label = self.labels[i]
-        # print(label)
-
         return (image, label)
 
    
         
         
 if __name__ == "__main__":
-    test_dataset = MyDataset("/Users/megha/Desktop/Plankton_Domain_Adaptation/data/kaggle",\
-        "/Users/megha/Desktop/Plankton_Domain_Adaptation/data/kaggle_dataset.pkl", "train")
+    test_dataset = SimpleDataset("/home/jwomack30/Plankton_Domain_Adaptation/data/whoi",\
+        "/home/jwomack30/Plankton_Domain_Adaptation/data/whoi_dataset.pkl", "train")
