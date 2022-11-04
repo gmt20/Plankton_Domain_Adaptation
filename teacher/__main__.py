@@ -125,7 +125,9 @@ def main(args):
     unnormlaised_data = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=None)
     mean, std = normalize(args.batch_size, unnormlaised_data)
     ## Create datasets ###
+    print(mean,std)
     
+    assert 1==0 
     
     print("Mean and Std", mean, std)
     
