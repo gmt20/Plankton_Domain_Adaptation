@@ -121,15 +121,14 @@ def main(args):
     elif args.dataset == "WHOIData":
         dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "whoi")    
+        mean, std = 0.7507, 0.2057
         
-    unnormlaised_data = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=None)
-    mean, std = normalize(args.batch_size, unnormlaised_data)
-    ## Create datasets ###
-    print(mean,std)
+    # unnormlaised_data = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='all',  image_size=args.image_size, normalize_param=None)
+    # mean, std = normalize(args.batch_size, unnormlaised_data)
+    # ## Create datasets ###
+    # print(mean,std)
     
-    assert 1==0 
-    
-    print("Mean and Std", mean, std)
+    # assert 1==0 
     
     train_dataset = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=[mean,std])
     val_dataset = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='val',  image_size=args.image_size, normalize_param=[mean,std])
@@ -176,7 +175,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--batch_size", type=int, default=64, help="batch_size for tecaher"
+        "--batch_size", type=int, default=32, help="batch_size for tecaher"
     )
 
     parser.add_argument(
@@ -184,7 +183,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--num_of_epochs", type=int, default=1, help="Number of epochs"
+        "--num_of_epochs", type=int, default=150, help="Number of epochs"
     )
 
     parser.add_argument(

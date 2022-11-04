@@ -17,7 +17,7 @@ def main(args):
     elif args.dataset == "WHOIData":
         dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "whoi")    
-        mean, std = 0.9016, 0.206
+        mean, std = 0.7507, 0.2057
         
     
      

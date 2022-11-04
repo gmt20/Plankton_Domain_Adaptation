@@ -41,11 +41,11 @@ def createDataset(path):
         "test_labels": label_test,
     }
 
-    outfile = open("whoi_dataset.pkl", "wb")
+    outfile = open("../data/whoi_dataset.pkl", "wb")
     pickle.dump(dataset, outfile)
     return outfile
 
 
 if __name__ == "__main__":
-    path = "../../data/whoi/"
+    path = "../data/whoi/"
     createDataset(path)
