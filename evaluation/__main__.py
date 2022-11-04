@@ -17,7 +17,14 @@ def main(args):
     elif args.dataset == "WHOIData":
         dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "whoi")    
-        mean, std = 0.7507, 0.2057
+        # mean, std = 0.7507, 0.2057
+        mean, std = 0.9016, 0.206
+    
+    elif args.dataset == "MiniPPlanktonData":
+        dataset_pkl = os.path.join(args.dataset_dir, "minipplankton_dataset.pkl")
+        root_dir= os.path.join(args.dataset_dir, "miniPPlankton")    
+        # mean, std = 0.7507, 0.2057
+        mean, std = 0.9016, 0.206
         
     
      
@@ -101,7 +108,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--n_query", type=int, default=1, help="Number of queries for testing"
+        "--n_query", type=int, default=10, help="Number of queries for testing"
     )
     
     parser.add_argument(
@@ -113,7 +120,7 @@ if __name__ == "__main__":
     parser.add_argument('--seed', default=78, type=int, help='random seed')
     
     parser.add_argument("--embedding_load_path", type=str, \
-        default="/home/jwomack30/Plankton_Domain_Adaptation/teacher/models/teacher_model_best.pkl", \
+        default="/home/jwomack30/Plankton_Domain_Adaptation/teacher/models_used/teacher_model_best.pkl", \
         help="Teacher model path")
     args = parser.parse_args()
     main(args)

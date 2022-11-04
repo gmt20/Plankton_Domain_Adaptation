@@ -16,12 +16,14 @@ class TransformDataset:
         self,
         image_size:int, 
         normalize_param:List[List],
-        aug:bool
+        aug:bool,
+        grayscale:bool
     ):
         
         self.aug = aug
         self.image_size = image_size
         self.normalize_param = normalize_param
+        self.grayscale = grayscale
         
         
     def apply_transformations(self, image_path:str):
@@ -31,13 +33,10 @@ class TransformDataset:
         if image_path.endswith(".tif"):
             arr = imread(image_path)
             image = Image.fromarray(arr)
-            # print(image)
-            # image = rasterio.open(image_path)
-            # image = image.read()
-            # image = Image.fromarray(image)
         else:
             image = Image.open(image_path)
        
+        
         transforms = self.get_composed_transform()
        
         #print(image.shape)
@@ -60,29 +59,23 @@ class TransformDataset:
             return method()
 
     def get_composed_transform(self):
-        if self.normalize_param is not None:
-            if self.aug:
-                transform_list = [
-                    
-                    "Resize",
-                    "RandomResizedCrop",
-                    "RandomHorizontalFlip",
-                    "ToTensor",
-                    "Normalize",
-                ]
-            else:
-                transform_list = [ "Resize", "CenterCrop", "ToTensor", "Normalize"]
+        
+        if self.aug:
+            transform_list = [
+                "Resize",
+                "RandomResizedCrop",
+                "RandomHorizontalFlip",
+                "ToTensor",
+            ]
         else:
-            if self.aug:
-                transform_list = [
-                    "Resize",
-                    "RandomResizedCrop",
-                    "RandomHorizontalFlip",
-                    "ToTensor",
-                ]
-            else:
-                transform_list = [ "Resize", "CenterCrop", "ToTensor"]
+            transform_list = [ "Resize", "CenterCrop", "ToTensor"]
 
+        if self.grayscale:
+            transform_list.append("Grayscale")
+            
+        if self.normalize_param is not None:
+            transform_list.append("Normalize")
+            
         transform_funcs = [self.parse_transform(x) for x in transform_list]
         transform = transforms.Compose(transform_funcs)
         return transform
@@ -144,8 +137,11 @@ class MyDataset(Dataset):
         else:
             aug = True
         # print(image_path) 
+        grayscale = False
+        if self.root_dir.endswith("miniPPlankton"):
+            grayscale = True
         
-        transform_dataset = TransformDataset(self.image_size, self.normalize_param, aug)
+        transform_dataset = TransformDataset(self.image_size, self.normalize_param, aug, grayscale)
         image = transform_dataset.apply_transformations(image_path)
         label = self.labels[i]
         # print(label)
