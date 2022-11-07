@@ -23,17 +23,20 @@ def finetune(novel_loader, params, n_shot):
     print("Loading Model: ", params.embedding_load_path)
     
 
-    pretrained_model_template = Resnet12(width=1, dropout=0.1)
+    pretrained_model_template = Resnet12()
     feature_dim = pretrained_model_template.output_size
    
-    sd = torch.load(params.embedding_load_path)
-    enc_sd = {}
-    for key in sd.keys():
-        if key.startswith('0'):
-            enc_key = key[2:]
-            enc_sd[enc_key] = sd[key]
     
-    pretrained_model_template.load_state_dict(enc_sd)
+    if not  params.random_initialize:
+        print("loading weights")
+        sd = torch.load(params.embedding_load_path)
+        enc_sd = {}
+        for key in sd.keys():
+            if key.startswith('0'):
+                enc_key = key[2:]
+                enc_sd[enc_key] = sd[key]
+        
+        pretrained_model_template.load_state_dict(enc_sd)
 
     n_query = params.n_query
     n_way = params.n_way
@@ -56,7 +59,7 @@ def finetune(novel_loader, params, n_shot):
 
         assert len(np.unique(y)) == n_way
     
-        batch_size = 4
+        batch_size = 5
         support_size = n_way * n_support 
        
         y_a_i = torch.from_numpy(np.repeat(range(n_way), n_support)).cuda()
@@ -65,11 +68,14 @@ def finetune(novel_loader, params, n_shot):
         x_b_i = x_var[:, n_support:,: ,: ,:].contiguous().view(n_way*n_query, *x.size()[2:]).cuda() 
         x_a_i = x_var[:, :n_support,: ,: ,:].contiguous().view(n_way*n_support, *x.size()[2:]).cuda() # (25, 3, 224, 224)
 
+        if params.random_initialize:
+            pretrained_model.train()
+        else: 
+            pretrained_model.eval()
         
-        pretrained_model.eval()
-        with torch.no_grad():
-            f_a_i = pretrained_model(x_a_i)
-        
+            with torch.no_grad():
+                f_a_i = pretrained_model(x_a_i)
+      
 
          ###############################################################################################
         loss_fn = nn.CrossEntropyLoss().cuda()
@@ -92,8 +98,10 @@ def finetune(novel_loader, params, n_shot):
                
                 y_batch = y_a_i[selected_id]
 
-                
-                output = f_a_i[selected_id]
+                if  params.random_initialize:
+                    output = pretrained_model(x_a_i[selected_id])
+                else:   
+                    output = f_a_i[selected_id]
                
                 output = classifier(output)
                 loss = loss_fn(output, y_batch)

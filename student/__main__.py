@@ -157,9 +157,9 @@ def main(args):
         base_dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
         base_root_dir= os.path.join(args.dataset_dir, "whoi")    
         
-    unnormlaised_data = MyDataset(root_dir=base_root_dir, split_file=base_dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=None)
-    mean, std = normalize(args.batch_size, unnormlaised_data)
-    print("Mean and Std", mean, std)
+    # unnormlaised_data = MyDataset(root_dir=base_root_dir, split_file=base_dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=None)
+    # mean, std = normalize(args.batch_size, unnormlaised_data)
+    # print("Mean and Std", mean, std)
     ## Create datasets ###
 
     
@@ -183,11 +183,16 @@ def main(args):
     if args.target_dataset == "KaggleData":
         target_dataset_pkl = os.path.join(args.dataset_dir, "kaggle_dataset.pkl")
         target_root_dir= os.path.join(args.dataset_dir, "kaggle")    
-        mean, std = 0.9016, 0.206
+       
         
     elif args.target_dataset == "WHOIData":
         target_dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
-        target_root_dir= os.path.join(args.dataset_dir, "whoi")    
+        target_root_dir= os.path.join(args.dataset_dir, "whoi")   
+         
+    elif args.target_dataset == "MiniPPlankton":
+        target_dataset_pkl = os.path.join(args.dataset_dir, "minipplankton_dataset.pkl")
+        target_root_dir= os.path.join(args.dataset_dir, "miniPPlankton")    
+        
         
     ## Create datasets ###
 
@@ -267,7 +272,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--learning_rate", type=float, default=5e-2, help="Leraning rate"
+        "--learning_rate", type=float, default=1e-4, help="Leraning rate"
     )
 
     parser.add_argument("--weight_decay", type=float, default=1e-3, help="weight decay")
@@ -285,7 +290,7 @@ if __name__ == "__main__":
         "--image_size", type=int, default=224, help="Size of Image"
     )
     parser.add_argument("--embedding_load_path", type=str, \
-        default="/home/jwomack30/Plankton_Domain_Adaptation/teacher/models_used/teacher_model_best.pkl", \
+        default="/home/jwomack30/Plankton_Domain_Adaptation/teacher/models/teacher_model_best.pkl", \
         help="Teacher model path")
     
     args = parser.parse_args()

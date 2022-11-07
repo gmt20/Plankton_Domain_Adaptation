@@ -1,6 +1,10 @@
+import argparse
+import sys
+from turtle import st
 import torch
 from torch.utils.data import DataLoader
-
+sys.path.append('/home/jwomack30/Plankton_Domain_Adaptation/datasets/')
+from datasetClass import MyDataset
 
 def normalize(batch_size, dataset):
 
@@ -34,4 +38,27 @@ def normalize(batch_size, dataset):
     
     return batch_mean_and_sd(loader)
 
+def main(args):
+    print("here")
+    unnormalized_data = MyDataset(root_dir=args.dataset_dir, split_file=args.split_file, phase='train',  image_size=args.image_size, normalize_param=None)
+    mean, std = normalize(args.batch_size, unnormalized_data)
+    print(mean, std)
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Normalization")
+
+    parser.add_argument(
+        "--dataset_dir", type=str, help="Location of directory containing images"
+    )
+    parser.add_argument("--split_file", type=str, help="Location of pickle file containing training and testing splits")    
+    parser.add_argument(
+        "--image_size", type=int, default=224, help="Size of Image"
+    )
+    parser.add_argument(
+        "--batch_size", type=int, default=1, help="Size of Batches"
+    ) 
+    args = parser.parse_args()
+    main(args)
     

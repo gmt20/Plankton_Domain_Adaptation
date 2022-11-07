@@ -35,13 +35,11 @@ class TransformDataset:
             image = Image.fromarray(arr)
         else:
             image = Image.open(image_path)
-       
-        
         transforms = self.get_composed_transform()
        
-        #print(image.shape)
+        if image.mode != "L":
+            image = image.convert("L")
         transformed_image = transforms(image)
-        
         return transformed_image
         
     def parse_transform(self, transform_type):

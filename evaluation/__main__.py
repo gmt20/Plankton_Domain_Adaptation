@@ -12,7 +12,7 @@ def main(args):
     if args.dataset == "KaggleData":
         dataset_pkl = os.path.join(args.dataset_dir, "kaggle_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "kaggle")    
-        mean, std = 0.9016, 0.206
+        mean, std = 0.9016, 0.206 #Kaggle Values
         
     elif args.dataset == "WHOIData":
         dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
@@ -27,7 +27,18 @@ def main(args):
         mean, std = 0.9016, 0.206
         
     
-     
+    elif args.dataset == "HarborBranchData":
+        dataset_pkl = os.path.join(args.dataset_dir, "harborBranch_dataset.pkl")
+        root_dir= os.path.join(args.dataset_dir, "harborBranch")    
+        # mean, std = 0.7507, 0.2057
+        mean, std = 0.9016, 0.206
+    
+    elif args.dataset == "NOAAData":
+        dataset_pkl = os.path.join(args.dataset_dir, "noaa_dataset.pkl")
+        root_dir= os.path.join(args.dataset_dir, "noaa")    
+        # mean, std = 0.7507, 0.2057
+        mean, std = 0.9016, 0.206
+
     results = {}
     shot_done = []
     
@@ -70,13 +81,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Finetuning")
 
-    parser.add_argument(
-        "--model_load_path",
-        type=str,
-        default="./teacher/models",
-        help="directory to load the checkpoints",
-    )
-
+    
 
     parser.add_argument(
         "--num_of_classes", type=int, default=22, help="classes in dataset"
@@ -115,9 +120,10 @@ if __name__ == "__main__":
         "--n_shots", nargs='+', default=[5,20], help="Number of shots per class"
     )
     parser.add_argument(
-        "--n_episodes", type=int, default=600, help="Number of episodes"
+        "--n_episodes", type=int, default=20, help="Number of episodes"
     )
     parser.add_argument('--seed', default=78, type=int, help='random seed')
+    parser.add_argument('--random_initialize', action='store_true')
     
     parser.add_argument("--embedding_load_path", type=str, \
         default="/home/jwomack30/Plankton_Domain_Adaptation/teacher/models_used/teacher_model_best.pkl", \
