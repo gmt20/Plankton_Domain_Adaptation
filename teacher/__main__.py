@@ -9,10 +9,10 @@ import numpy as np
 import matplotlib.pylab as plt
 import torchvision.transforms as T
 from torch import nn
+from torchsummary import summary
 
 from models.resnet12 import Resnet12
 from models.classifier import Classifier
-from datasets import readKaggleData, readWHOIData
 from teacher.train import loop_over_all_epochs
 
 import argparse
@@ -89,7 +89,13 @@ def run(
     # print(model.state_dict)
     # print(torch.load("./teacher/models/teacher_model_best.pkl")["Encoder"].keys())
     # assert 1==0
-    model.load_state_dict(torch.load("./teacher/models/teacher_model_best.pkl"))
+    best_model_path = model_save_path + "/teacher_model_best.pkl" 
+    model.load_state_dict(torch.load(best_model_path))
+    print(model.Classifier)
+    model.fc2.register_forward_hook(get_activation('fc2'))
+
+    summary(model,(1,224,224))
+
     (test_loss, test_acc,) = loop_over_all_epochs(
         [testloader], 1, model, train_on_gpu, loss_criteria, "test"
     )
@@ -122,11 +128,27 @@ def main(args):
         dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "whoi")    
         mean, std = 0.7507, 0.2057
+
+    elif args.dataset == "miniPPlanktonData":
+        dataset_pkl = os.path.join(args.dataset_dir, "minipplankton_dataset.pkl")
+        root_dir = os.path.join(args.dataset_dir, "miniPPlankton")
+        mean, std = 0.7036, 0.1768
+
+    elif args.dataset == "noaaData":
+        dataset_pkl = os.path.join(args.dataset_dir, "noaa_dataset.pkl")
+        root_dir = os.path.join(args.dataset_dir, "noaa")
+        mean, std = 0.0839, 0.1939
+
+    elif args.dataset == "harborBranchData":
+        dataset_pkl = os.path.join(args.dataset_dir, "harborBranch_dataset.pkl")
+        root_dir = os.path.join(args.dataset_dir, "harborBranch")
+        mean, std = 0.2724, 0.1747
         
     # unnormlaised_data = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='all',  image_size=args.image_size, normalize_param=None)
     # mean, std = normalize(args.batch_size, unnormlaised_data)
-    # ## Create datasets ###
-    # print(mean,std)
+    # print (mean, std)
+
+    ## Create datasets ###
     
     # assert 1==0 
     
@@ -183,7 +205,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--num_of_epochs", type=int, default=150, help="Number of epochs"
+        "--num_of_epochs", type=int, default=0, help="Number of epochs"
     )
 
     parser.add_argument(

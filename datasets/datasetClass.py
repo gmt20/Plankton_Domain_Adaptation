@@ -130,11 +130,12 @@ class MyDataset(Dataset):
 
     def __getitem__(self, i):
         image_path = os.path.join(self.root_dir, self.images[i])
+        
         if self.phase == "test":
             aug = False
         else:
             aug = True
-        # print(image_path) 
+
         grayscale = False
         if self.root_dir.endswith("miniPPlankton"):
             grayscale = True
