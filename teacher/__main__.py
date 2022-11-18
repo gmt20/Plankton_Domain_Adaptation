@@ -9,7 +9,6 @@ import numpy as np
 import matplotlib.pylab as plt
 import torchvision.transforms as T
 from torch import nn
-from torchsummary import summary
 
 from models.resnet12 import Resnet12
 from models.classifier import Classifier
@@ -201,7 +200,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--num_of_epochs", type=int, default=0, help="Number of epochs"
+        "--num_of_epochs", type=int, default=150, help="Number of epochs"
     )
 
     parser.add_argument(
