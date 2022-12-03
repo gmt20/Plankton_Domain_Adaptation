@@ -106,7 +106,7 @@ def run(
         f.write(f"Test Loss: {np.asarray(test_loss)[0]} ")
         f.write("\n")
 
-def pseudolabel_dataset(embedding, clf, dataset, params ):
+def pseudolabel_dataset(embedding, clf, dataset, params):
     embedding.eval()
     clf.eval()
 
@@ -136,6 +136,24 @@ def pseudolabel_dataset(embedding, clf, dataset, params ):
         raise ValueError("No Targets variable found!")
    
     return dataset
+
+def psuedolabel_dataset_clustering(embedding, clf, dataset, params):
+    embedding.eval()
+    clf.eval()
+
+    loader = torch.utils.data.DataLoader(dataset, batch_size=params.batch_size,
+                        shuffle=False, drop_last=False, num_workers=3)
+
+    # do an inference on the full target dataset
+    probs_all = []
+    for X, _ in loader:
+        X = Variable(X).float()
+        X = X.cuda()
+        with torch.no_grad():
+            feature = embedding(X)
+            print(type(feature))
+            print(feature.shape)
+            # Save features
 
 
 def main(args):
@@ -201,15 +219,9 @@ def main(args):
     target_val_dataset = MyDataset(root_dir=target_root_dir, split_file=target_dataset_pkl, phase='val',  image_size=args.image_size, normalize_param=[mean,std])
     target_test_dataset = MyDataset(root_dir=target_root_dir, split_file=target_dataset_pkl, phase='test',  image_size=args.image_size, normalize_param=[mean,std])
     
-    
-    ## Create Dataloader ##
-    target_train_dataloader = DataLoader(target_train_dataset, args.batch_size, shuffle=True, num_workers=3, pin_memory=True)
-    target_val_dataloader = DataLoader(target_val_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True)
-    target_test_dataloader = DataLoader(target_test_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True)
    
-    print("Size of Train Data", len(target_train_dataloader))
-    print("Size of Val Data", len(target_val_dataloader))
-    print("Size of Test Data", len(target_test_dataloader))
+   
+    
    
 
     # Create Model ##
@@ -230,6 +242,16 @@ def main(args):
     target_train_dataset = pseudolabel_dataset(encoder, classifier, target_train_dataset, args )
     target_val_dataset = pseudolabel_dataset(encoder, classifier, target_val_dataset, args )
     target_test_dataset = pseudolabel_dataset(encoder, classifier, target_test_dataset, args )
+    
+     
+    ## Create Dataloader ##
+    target_train_dataloader = DataLoader(target_train_dataset, args.batch_size, shuffle=True, num_workers=3, pin_memory=True)
+    target_val_dataloader = DataLoader(target_val_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True)
+    target_test_dataloader = DataLoader(target_test_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True)
+    
+    print("Size of Train Data", len(target_train_dataloader))
+    print("Size of Val Data", len(target_val_dataloader))
+    print("Size of Test Data", len(target_test_dataloader))
 
     run(
         model,
@@ -290,7 +312,7 @@ if __name__ == "__main__":
         "--image_size", type=int, default=224, help="Size of Image"
     )
     parser.add_argument("--embedding_load_path", type=str, \
-        default="/home/jwomack30/Plankton_Domain_Adaptation/teacher/models/teacher_model_best.pkl", \
+        default="/home/jwomack30/Plankton_Domain_Adaptation/teacher/models/kaggle/teacher_model_best.pkl", \
         help="Teacher model path")
     
     args = parser.parse_args()

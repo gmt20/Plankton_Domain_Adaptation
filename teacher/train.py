@@ -79,19 +79,19 @@ def loop_over_all_epochs(
             )
 
             ## SAVE THE LAST MODEL
-            if epoch == num_of_epochs - 1:
-                path = os.path.join(save_model_path, "teacher_model_last.pkl")
-                sd = {}
-                sd = copy.deepcopy(net.state_dict())
-                torch.save(sd, path)
+            # if epoch == num_of_epochs - 1:
+            #     path = os.path.join(save_model_path, "teacher_model_last.pkl")
+            #     sd = {}
+            #     sd = copy.deepcopy(net.state_dict())
+            #     torch.save(sd, path)
 
             ## SAVE THE BEST MODEL
-            if val_epoch_loss <= min_val_loss:
-                path = os.path.join(save_model_path, "teacher_model_best.pkl")
-                sd = {}
-                sd = copy.deepcopy(net.state_dict())
-                torch.save(sd, path)
-                min_val_loss = val_epoch_loss
+            # if val_epoch_loss <= min_val_loss:
+            #     path = os.path.join(save_model_path, "teacher_model_best.pkl")
+            #     sd = {}
+            #     sd = copy.deepcopy(net.state_dict())
+            #     torch.save(sd, path)
+            #     min_val_loss = val_epoch_loss
 
             val_epoch_losses.append(val_epoch_loss)
             val_epoch_accs.append(val_epoch_acc)
@@ -105,6 +105,7 @@ def loop_over_all_epochs(
         acc = [train_epoch_accs, val_epoch_accs]
 
     else:
+        print("EVAL")
         net.eval()
         (
             test_loss,
@@ -144,10 +145,12 @@ def loop_over_all_datapoints(
             optimizer.zero_grad()
 
         with torch.set_grad_enabled(phase == "train"):
+            print(X.shape)
             output = net(X)
             # print("Output",output.shape)
             _, preds = torch.max(output, 1)
-            # print("y", y.shape)
+            print("y", y.shape)
+            print("output", output.shape)
             loss = loss_criteria( output, y)
 
             if phase == "train":

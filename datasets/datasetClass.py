@@ -137,8 +137,8 @@ class MyDataset(Dataset):
             aug = True
 
         grayscale = False
-        if self.root_dir.endswith("miniPPlankton"):
-            grayscale = True
+        # if self.root_dir.endswith("miniPPlankton"):
+        #     grayscale = True
         
         transform_dataset = TransformDataset(self.image_size, self.normalize_param, aug, grayscale)
         image = transform_dataset.apply_transformations(image_path)

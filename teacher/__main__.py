@@ -91,7 +91,7 @@ def run(
     # assert 1==0
     best_model_path = model_save_path + "/teacher_model_best.pkl" 
     model.load_state_dict(torch.load(best_model_path))
-    print(model.Classifier)
+    print(model[0])
     model.fc2.register_forward_hook(get_activation('fc2'))
 
     summary(model,(1,224,224))
