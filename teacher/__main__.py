@@ -91,11 +91,6 @@ def run(
     # assert 1==0
     best_model_path = model_save_path + "/teacher_model_best.pkl" 
     model.load_state_dict(torch.load(best_model_path))
-    print(model[0])
-    model.fc2.register_forward_hook(get_activation('fc2'))
-
-    summary(model,(1,224,224))
-
     (test_loss, test_acc,) = loop_over_all_epochs(
         [testloader], 1, model, train_on_gpu, loss_criteria, "test"
     )
@@ -144,6 +139,7 @@ def main(args):
         root_dir = os.path.join(args.dataset_dir, "harborBranch")
         mean, std = 0.2724, 0.1747
         
+    ## Data normalization ##
     # unnormlaised_data = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='all',  image_size=args.image_size, normalize_param=None)
     # mean, std = normalize(args.batch_size, unnormlaised_data)
     # print (mean, std)
