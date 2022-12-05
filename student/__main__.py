@@ -166,14 +166,32 @@ def main(args):
         os.mkdir(log_dir)
 
     ## Get dataset splits ###
-    if args.base_dataset == "KaggleData":
+    if args.base_dataset == "Kaggle":
         base_dataset_pkl = os.path.join(args.dataset_dir, "kaggle_dataset.pkl")
         base_root_dir= os.path.join(args.dataset_dir, "kaggle")    
         mean, std = 0.9016, 0.206
         
-    elif args.base_dataset == "WHOIData":
+    elif args.base_dataset == "WHOI":
         base_dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
-        base_root_dir= os.path.join(args.dataset_dir, "whoi")    
+        base_root_dir= os.path.join(args.dataset_dir, "whoi")   
+        mean, std = 0.7494, 0.2068
+
+    elif args.base_dataset == "MiniPPlankton":
+        base_dataset_pkl = os.path.join(args.dataset_dir, "minipplankton_dataset.pkl")
+        base_root_dir= os.path.join(args.dataset_dir, "miniPPlankton")  
+        mean, std = 0.6992, 0.1764  
+    
+    elif args.base_dataset == "NOAA":
+        base_dataset_pkl = os.path.join(args.dataset_dir, "noaa_dataset.pkl")
+        base_root_dir= os.path.join(args.dataset_dir, "noaa")    
+        mean, std = 0.0845, 0.1948
+        
+    elif args.base_dataset == "HarborBranch":
+        base_dataset_pkl = os.path.join(args.dataset_dir, "harborBranch_dataset.pkl")
+        base_root_dir= os.path.join(args.dataset_dir, "harborBranch")    
+        mean, std = 0.2722, 0.1739
+
+        
         
     # unnormlaised_data = MyDataset(root_dir=base_root_dir, split_file=base_dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=None)
     # mean, std = normalize(args.batch_size, unnormlaised_data)
@@ -191,6 +209,7 @@ def main(args):
     base_val_dataloader = DataLoader(base_val_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True)
     base_test_dataloader = DataLoader(base_test_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True)
    
+    print(args.base_dataset)
     print("Size of Train Data", len(base_train_dataloader))
     print("Size of Val Data", len(base_val_dataloader))
     print("Size of Test Data", len(base_test_dataloader))
@@ -198,22 +217,34 @@ def main(args):
     
     # Repeat for the target dataset 
     ## Get dataset splits ###
-    if args.target_dataset == "KaggleData":
+    if args.target_dataset == "Kaggle":
         target_dataset_pkl = os.path.join(args.dataset_dir, "kaggle_dataset.pkl")
         target_root_dir= os.path.join(args.dataset_dir, "kaggle")    
-       
+        mean, std = 0.9016, 0.206
         
-    elif args.target_dataset == "WHOIData":
+    elif args.target_dataset == "WHOI":
         target_dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
-        target_root_dir= os.path.join(args.dataset_dir, "whoi")   
+        target_root_dir= os.path.join(args.dataset_dir, "whoi") 
+        mean, std = 0.7494, 0.2068
+
          
     elif args.target_dataset == "MiniPPlankton":
         target_dataset_pkl = os.path.join(args.dataset_dir, "minipplankton_dataset.pkl")
-        target_root_dir= os.path.join(args.dataset_dir, "miniPPlankton")    
+        target_root_dir= os.path.join(args.dataset_dir, "miniPPlankton")
+        mean, std = 0.6992, 0.1764    
+    
+    elif args.target_dataset == "NOAA":
+        target_dataset_pkl = os.path.join(args.dataset_dir, "noaa_dataset.pkl")
+        target_root_dir= os.path.join(args.dataset_dir, "noaa")   
+        mean, std = 0.0845, 0.1948 
         
+    elif args.target_dataset == "HarborBranch":
+        target_dataset_pkl = os.path.join(args.dataset_dir, "harborBranch_dataset.pkl")
+        target_root_dir= os.path.join(args.dataset_dir, "harborBranch")  
+        mean, std = 0.2722, 0.1739     
         
     ## Create datasets ###
-
+    print(target_root_dir)
     #using mean std of base dataset
     target_train_dataset = MyDataset(root_dir=target_root_dir, split_file=target_dataset_pkl, phase='train',  image_size=args.image_size, normalize_param=[mean,std])
     target_val_dataset = MyDataset(root_dir=target_root_dir, split_file=target_dataset_pkl, phase='val',  image_size=args.image_size, normalize_param=[mean,std])

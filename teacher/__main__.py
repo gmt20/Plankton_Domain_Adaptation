@@ -114,30 +114,30 @@ def main(args):
         os.mkdir(log_dir)
 
     ## Get dataset splits ###
-    if args.dataset == "KaggleData":
+    if args.dataset == "Kaggle":
         dataset_pkl = os.path.join(args.dataset_dir, "kaggle_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "kaggle")    
         mean, std = 0.9016, 0.206
         
-    elif args.dataset == "WHOIData":
+    elif args.dataset == "WHOI":
         dataset_pkl = os.path.join(args.dataset_dir, "whoi_dataset.pkl")
         root_dir= os.path.join(args.dataset_dir, "whoi")    
-        mean, std = 0.7507, 0.2057
+        mean, std = 0.7494, 0.2068
 
-    elif args.dataset == "miniPPlanktonData":
+    elif args.dataset == "MiniPPlankton":
         dataset_pkl = os.path.join(args.dataset_dir, "minipplankton_dataset.pkl")
         root_dir = os.path.join(args.dataset_dir, "miniPPlankton")
-        mean, std = 0.7036, 0.1768
+        mean, std = 0.6992, 0.1764  
 
-    elif args.dataset == "noaaData":
+    elif args.dataset == "NOAA":
         dataset_pkl = os.path.join(args.dataset_dir, "noaa_dataset.pkl")
         root_dir = os.path.join(args.dataset_dir, "noaa")
-        mean, std = 0.0839, 0.1939
+        mean, std = 0.0845, 0.1948
 
-    elif args.dataset == "harborBranchData":
+    elif args.dataset == "HarborBranch":
         dataset_pkl = os.path.join(args.dataset_dir, "harborBranch_dataset.pkl")
         root_dir = os.path.join(args.dataset_dir, "harborBranch")
-        mean, std = 0.2724, 0.1747
+        mean, std = 0.2722, 0.1739
         
     ## Data normalization ##
     # unnormlaised_data = MyDataset(root_dir=root_dir, split_file=dataset_pkl, phase='all',  image_size=args.image_size, normalize_param=None)
