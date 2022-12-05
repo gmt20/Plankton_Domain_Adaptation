@@ -166,6 +166,7 @@ class LabelWiseDataset:
         sub_data_loader_params = dict(batch_size = batch_size,
                                   shuffle = True,
                                   num_workers = 0,
+                                  drop_last=True,
                                   pin_memory = False)        
         for cl in self.cl_list:
             ind = np.where(np.array(self.dataset.labels) == cl)[0].tolist()
@@ -234,7 +235,7 @@ class FewShotDataset:
         dataset = LabelWiseDataset(self.root_dir, self.split_file, self.phase, self.image_size, self.normalize_param, self.batch_size)
         # print("Label wise dataset", len(dataset))
         sampler = EpisodicBatchSampler(len(dataset), self.n_way, self.n_eposide )  
-        data_loader_params = dict(batch_sampler = sampler,  num_workers = num_workers, pin_memory = True)       
+        data_loader_params = dict(batch_sampler = sampler,  num_workers = num_workers, pin_memory = True)    
         data_loader = torch.utils.data.DataLoader(dataset, **data_loader_params)
         return data_loader
 
