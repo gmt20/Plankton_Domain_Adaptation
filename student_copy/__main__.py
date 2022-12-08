@@ -12,8 +12,8 @@ from torch import nn
 
 from models.resnet12 import Resnet12
 from models.classifier import Classifier
-from datasets import readKaggle as readKaggleData
-from datasets import readWHOI as readWHOIData
+from datasets import readKaggleData
+from datasets import  readWHOIData
 from student_copy.train import loop_over_all_epochs
 from torch.nn import functional as F
 import argparse
@@ -118,7 +118,7 @@ def pseudolabel_dataset(embedding, clf, dataset, params):
     clf.eval()
 
     loader = torch.utils.data.DataLoader(dataset, batch_size=params.batch_size,
-                        shuffle=False, drop_last=False, num_workers=3)
+                        shuffle=False, drop_last=False)
 
     # do an inference on the full target dataset
     features_all = []
@@ -188,9 +188,9 @@ def main(args):
     
     
     ## Create Dataloader ##
-    base_train_dataloader = DataLoader(base_train_dataset, args.batch_size, shuffle=True, num_workers=3, pin_memory=True)
-    base_val_dataloader = DataLoader(base_val_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True)
-    base_test_dataloader = DataLoader(base_test_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True)
+    base_train_dataloader = DataLoader(base_train_dataset, args.batch_size, shuffle=True, pin_memory=True)
+    base_val_dataloader = DataLoader(base_val_dataset, args.batch_size, shuffle=False, pin_memory=True)
+    base_test_dataloader = DataLoader(base_test_dataset, args.batch_size, shuffle=False, pin_memory=True)
    
     print("Size of Train Data", len(base_train_dataloader))
     print("Size of Val Data", len(base_val_dataloader))
@@ -212,6 +212,11 @@ def main(args):
         target_dataset_pkl = os.path.join(args.dataset_dir, "minipplankton_dataset.pkl")
         target_root_dir= os.path.join(args.dataset_dir, "miniPPlankton")    
         
+    elif args.target_dataset == "HB":
+        print("hb")
+        target_dataset_pkl = os.path.join(args.dataset_dir, "harborBranch_dataset.pkl")
+        target_root_dir= os.path.join(args.dataset_dir, "harborBranch")  
+        
         
     ## Create datasets ###
 
@@ -221,10 +226,6 @@ def main(args):
     target_test_dataset = MyDataset(root_dir=target_root_dir, split_file=target_dataset_pkl, phase='test',  image_size=args.image_size, normalize_param=[mean,std])
    
     
-   
-    print("Size of Train Data", len(target_train_dataloader))
-    print("Size of Val Data", len(target_val_dataloader))
-    print("Size of Test Data", len(target_test_dataloader))
    
 
     # Create Model ##
@@ -247,11 +248,15 @@ def main(args):
     target_test_dataset = pseudolabel_dataset(encoder, classifier, target_test_dataset, args )
     
      ## Create Dataloader ##
-    target_train_dataloader = DataLoader(target_train_dataset, args.batch_size, shuffle=True, num_workers=3, pin_memory=True,  drop_last=True)
-    target_val_dataloader = DataLoader(target_val_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True,  drop_last=True)
-    target_test_dataloader = DataLoader(target_test_dataset, args.batch_size, shuffle=False, num_workers=3, pin_memory=True , drop_last=True)
+    target_train_dataloader = DataLoader(target_train_dataset, args.batch_size, shuffle=True, pin_memory=True,  drop_last=True)
+    target_val_dataloader = DataLoader(target_val_dataset, args.batch_size, shuffle=False, pin_memory=True,  drop_last=True)
+    target_test_dataloader = DataLoader(target_test_dataset, args.batch_size, shuffle=False, pin_memory=True , drop_last=True)
    
 
+    print("Size of Train Data", len(target_train_dataloader))
+    print("Size of Val Data", len(target_val_dataloader))
+    print("Size of Test Data", len(target_test_dataloader))
+   
     run(
         model,
         args.num_of_epochs,
@@ -281,9 +286,9 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--batch_size", type=int, default=32, help="batch_size for tecaher"
+        "--batch_size", type=int, default=16, help="batch_size for tecaher"
     )
-    parser.add_argument('--num_of_target_classes', type=int, default=22, help='Num of target classes')
+    parser.add_argument('--num_of_target_classes', type=int, default=16, help='Num of target classes')
 
     parser.add_argument(
         "--base_num_of_classes", type=int, default=118, help="classes in dataset"
